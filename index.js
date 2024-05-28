@@ -13,6 +13,7 @@ const options = {
 };
 
 inquirer.prompt(options).then((anwsers) => {
+const {options} = anwsers;
 
-    
+
 })
