@@ -12,7 +12,16 @@ const options = {
     
     
 };
-
+const newDept ={
+    type: 'input',
+    name: 'departments_name',
+    message: 'What is the name of the new department?'
+}
+const newRole ={
+    type: 'input',
+    name: 'title',
+    message: 'What is the name of the new role?',
+}
 function main_menu() {
     inquirer.prompt(options).then((anwsers) => {
         const {options} = anwsers;
@@ -28,6 +37,28 @@ function main_menu() {
                 if(err) console.log(err);
                 console.log(results);
                 main_menu();
+            });
+        }else if(options == 'View all employees'){
+            db.query('SELECT * FROM employees', function (err, results) {
+                if(err) console.log(err);
+                console.log(results);
+                main_menu();
+            });
+        }else if (options == 'add a department'){
+            inquirer.prompt(newDept).then((answers) => {
+                db.query('INSERT INTO departments SET?', answers, function (err, results) {
+                    if(err) console.log(err);
+                    console.log(results);
+                    main_menu();
+                });
+            });
+        }else if (options == 'add a role'){
+            inquirer.prompt(newRole).then((answers) => {
+                db.query('INSERT INTO roles SET?', answers, function (err, results) {
+                    if(err) console.log(err);
+                    console.log(results);
+                    main_menu();
+                });
             });
         }
     })
