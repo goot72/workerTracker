@@ -22,6 +22,18 @@ const newRole ={
     name: 'title',
     message: 'What is the name of the new role?',
 }
+
+async function getDepartments(){
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM departments', function (err, results) {
+            if(err) {
+                reject(err);
+            }else{
+                resolve(results);
+            }
+        });
+    });
+}
 function main_menu() {
     inquirer.prompt(options).then((anwsers) => {
         const {options} = anwsers;
@@ -53,14 +65,38 @@ function main_menu() {
                 });
             });
         }else if (options == 'add a role'){
-            inquirer.prompt(newRole).then((answers) => {
-                db.query('INSERT INTO roles SET?', answers, function (err, results) {
-                    if(err) console.log(err);
-                    console.log(results);
-                    main_menu();
+            getDepartments().then((departments) => {
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "title",
+                        message: "Enter the title of the new role:",
+                    },
+                    {
+                        type: "input",
+                        name: "salary",
+                        message: "Enter the salary of the new role:",
+                    },
+                    {
+                        type: "list",
+                        name: "department",
+                        message: "Select the department for the new role:",
+                        choices: departments.map((departments) => {
+                            return {
+                                name: departments.name,
+                                value: departments.id,
+                            };
+                        })
+                    },
+                ]).then((answers) => {
+                    db.query('INSERT INTO roles SET?', answers, function (err, results) {
+                        if(err) console.log(err);
+                        console.log(results);
+                        main_menu();
+                    });
                 });
             });
         }
-    })
-}
+    });
+}  
 main_menu();
