@@ -79,7 +79,7 @@ function main_menu() {
                     },
                     {
                         type: "list",
-                        name: "department",
+                        name: "departments_id",
                         message: "Select the department for the new role:",
                         choices: departments.map((departments) => {
                             return {
@@ -93,10 +93,11 @@ function main_menu() {
                         if(err) console.log(err);
                         console.log(results);
                         main_menu();
+                    
                     });
                 });
             });
         }
-    });
-}  
+    });  
+};
 main_menu();

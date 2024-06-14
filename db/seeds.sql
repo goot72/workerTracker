@@ -1,1 +1,2 @@
-INSERT INTO departments ()
+INSERT INTO departments (id, departments_name) values 
+(1, 'first department')
