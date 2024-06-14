@@ -34,6 +34,17 @@ async function getDepartments(){
         });
     });
 }
+async function getRoles(){
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM roles', function (err, results) {
+            if(err) {
+                reject(err);
+            }else{
+                resolve(results);
+            }
+        });
+    });
+}
 function main_menu() {
     inquirer.prompt(options).then((anwsers) => {
         const {options} = anwsers;
@@ -93,11 +104,55 @@ function main_menu() {
                         if(err) console.log(err);
                         console.log(results);
                         main_menu();
-                    
+                        
                     });
                 });
             });
-        }
-    });  
+        }else if(options == 'add an employee') {
+            getRoles().then((roles) => {
+                inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "first_name",
+                        message: "Enter the first name of the new employee:",
+                    },
+                    {
+                        type: "input",
+                        name: "last_name",
+                        message: "Enter the last name of the new employee:",
+                    },
+                    {
+                        type: "list",
+                        name: "role_id",
+                        message: "Select the role for the new employee:",
+                        choices: roles.map((roles) => {
+                            return {
+                                name: roles.title,
+                                value: roles.id,
+                            };
+                        })
+                    },
+                    // {
+                    //     type: "list",
+                    //     name: "manager_id",
+                    //     message: "Select the manager for the new employee:",
+                    //     choices: managers.map((managers) => {
+                    //         return {
+                    //             name: managers.first_name,
+                    //             value: managers.first_name,
+                    //         };
+                    //     })
+                    // },
+                ]).then((anwsers) => {
+                    db.query('INSERT INTO employees SET?', anwsers, function (err, results) {
+                        if(err) console.log(err);
+                        console.log(results);
+                        main_menu();
+                    });
+                })
+            })
+        };  
+    });
 };
-main_menu();
+    main_menu();
+    
