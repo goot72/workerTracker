@@ -44,6 +44,16 @@ async function getRoles(){
             }
         });
     });
+}function getEmployees(){
+    return new Promise((resolve, reject) => {
+        db.query('SELECT * FROM employees', function (err, results) {
+            if(err) {
+                reject(err);
+            }else{
+                resolve(results);
+            }
+        });
+    });
 }
 function main_menu() {
     inquirer.prompt(options).then((anwsers) => {
@@ -152,10 +162,41 @@ function main_menu() {
                     });
                 })
             })
-        }else if(options == 'update an employee'){
-            
-        }  
+        }else if(options == 'update an employee role'){
+            getEmployees().then((employees) => {
+                inquirer.prompt([
+                    {
+                        type: "list",
+                        name: "employee_id",
+                        message: "Select the employee you want to update:",
+                        choices: employees.map((employees) => {
+                            return {
+                                name: employees.first_name,
+                                value: employees.id,
+                            };
+                        })
+                    },
+                    {
+                        type: "list",
+                        name: "role_id",
+                        message: "Select the new role for the employee:",
+                        choices: roles.map((roles) => {
+                            return {
+                                name: roles.title,
+                                value: roles.id,
+                            };
+                        })
+                    },
+                    
+                ]).then((answers) => {
+                    db.query('UPDATE employees SET role_id =? WHERE id =?', [answers.role_id, answers.employee_id], function (err, results) {
+                        if(err) console.log(err);
+                        console.log(results);
+                        main_menu();
+                    });
+                });
+            });
+        }; 
     });
 };
-    main_menu();
-    
+main_menu();
