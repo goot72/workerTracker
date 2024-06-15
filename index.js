@@ -56,13 +56,14 @@ function main_menu() {
             });
             
         }else if (options == 'View all roles'){
-            db.query('SELECT * FROM roles', function (err, results) {
+            db.query('SELECT * FROM roles ', function (err, results) {
                 if(err) console.log(err);
                 console.log(results);
                 main_menu();
             });
         }else if(options == 'View all employees'){
-            db.query('SELECT * FROM employees', function (err, results) {
+            db.query('SELECT first_name, last_name, roles.title FROM employees LEFT JOIN roles on employees.role_id = roles.id',
+            function (err, results) {
                 if(err) console.log(err);
                 console.log(results);
                 main_menu();
@@ -151,7 +152,9 @@ function main_menu() {
                     });
                 })
             })
-        };  
+        }else if(options == 'update an employee'){
+            
+        }  
     });
 };
     main_menu();
