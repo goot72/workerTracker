@@ -163,7 +163,43 @@ function main_menu() {
                 })
             })
         }else if(options == 'update an employee role'){
+            //     getEmployees().then((employees) => {
+            //         inquirer.prompt([
+            //             {
+            //                 type: "list",
+            //                 name: "employee_id",
+            //                 message: "Select the employee you want to update:",
+            //                 choices: employees.map((employees) => {
+            //                     return {
+            //                         name: employees.first_name,
+            //                         value: employees.id,
+            //                     };
+            //                 })
+            //             },
+            //             {
+            //                 type: "list",
+            //                 name: "role_id",
+            //                 message: "Select the new role for the employee:",
+            //                 choices: roles.map((roles) => {
+            //                     return {
+            //                         name: roles.title,
+            //                         value: roles.id,
+            //                     };
+            //                 })
+            //             },
+            
+            //         ]).then((answers) => {
+            //             db.query('UPDATE employees SET role_id =? WHERE id =?', [answers.role_id, answers.employee_id], function (err, results) {
+            //                 if(err) console.log(err);
+            //                 console.log(results);
+            //                 main_menu();
+            //             });
+            //         });
+            //     });
+            // }; 
             getEmployees().then((employees) => {
+                let slectedEmployee
+                let selectedRole
                 inquirer.prompt([
                     {
                         type: "list",
@@ -175,25 +211,33 @@ function main_menu() {
                                 value: employees.id,
                             };
                         })
-                    },
-                    {
-                        type: "list",
-                        name: "role_id",
-                        message: "Select the new role for the employee:",
-                        choices: roles.map((roles) => {
-                            return {
-                                name: roles.title,
-                                value: roles.id,
-                            };
-                        })
-                    },
-                    
+                    },              
                 ]).then((answers) => {
-                    db.query('UPDATE employees SET role_id =? WHERE id =?', [answers.role_id, answers.employee_id], function (err, results) {
-                        if(err) console.log(err);
-                        console.log(results);
-                        main_menu();
-                    });
+                    slectedEmployee = answers.employee_id;
+                    getRoles().then((roles) => {
+                        inquirer.prompt([
+                            {
+                                type: "list",
+                                name: "role_id",
+                                message: "Select the new role for the employee:",
+                                choices: roles.map((roles) => {
+                                    return {
+                                        name: roles.title,
+                                        value: roles.id,
+                                    };
+                                })
+                            },
+                        ]).then((answers) => {
+                            selectedRole = answers.role_id;
+                            console.log('selected role', selectedRole);
+                            console.log('seleected employee', slectedEmployee);
+                            db.query('UPDATE employees SET role_id =? WHERE id =?', [selectedRole, slectedEmployee], function (err, results) {
+                                if(err) console.log(err);
+                                console.log(results);
+                                main_menu();
+                            });
+                        })
+                    }) 
                 });
             });
         }; 
